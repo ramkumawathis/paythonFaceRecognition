@@ -1,5 +1,32 @@
 
 # install python  3.10.11
+Flask: jo jo package install kiye hai unki history ke liye  "requirements.txt" create kr lo
+like is time se history rkh lo 
+flask
+opencv-python
+face-recognition
+requests 
+python-dotenv
+
+
+# Note: all package ek sath install ke liye below command chala do console me
+pip install -r requirements.txt       // for all requirements ek sath install krni ho to
+
+
+
+
+
+# flask project restart:   Ye nhi kroge to chagnes ke bad me restart kroge tab hi changes dikhenge
+# FLASK_APP=app (app) name hamesa wo hi name do jo aapko call krwana hai lime isme main.py hai
+pip install python-dotenv  // ye project install kr lo
+.flaskenv                  // root directory in create a file and below wala code dal do
+	
+FLASK_APP=app  // jis file ko run krte hai (app or main) file
+FLASK_DEBUG=1
+
+
+
+
 -> Add to environ ment variables
     Go to Advance => click on “Environment variable”
     Ststem variable=> click on path and “edit”

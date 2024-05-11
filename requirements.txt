@@ -1,0 +1,4 @@
+flask
+1). pip install opencv-python
+2). pip install face-recognition
+3). pip install requests        // api se data lena ho third party se to 
