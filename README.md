@@ -158,6 +158,7 @@ def hello_world():
 app.run(debug=True)
 
 4).flask --app main run      //  run flask
+    flask run // now use  (flaskdotenv) file create ke bad me ye command chala denge.
 
 5). top me template import kr lo // from flask import Flask, render_template
 	@app.route("/")

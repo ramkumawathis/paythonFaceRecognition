@@ -9,7 +9,34 @@
         <h1><a href="/">Home</a></h1>
         <h3>OpenCV Camera Feed in Flask</h3>
         <img src="{{ url_for('video_feed') }}" alt="Video Feed">
-
         
+        <button type="button" id="submit_form">Take Attendance</button>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+        <script>
+             $(document).ready(function(){
+                $(document).on('click','#submit_form',function(){                    
+                    const formData = new FormData();
+                    formData.append('gym_id', '1');
+
+                    fetch('/takeAttendance', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Photo uploaded successfully!');
+                            // Optionally, reset the form after successful upload
+                            uploadForm.reset();
+                        } else {
+                            console.error('Failed to upload photo:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error uploading photo:', error);
+                    });
+                })
+            })
+        </script>
     </body>
 </html>

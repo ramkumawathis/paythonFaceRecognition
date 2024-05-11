@@ -72,7 +72,8 @@ for filename in os.listdir(subfolder_path):
 # Now you have the arrays of known face encodings and their names
 # You can use them for face recognition
 
-
+GLOBALUSERID = "Test Name"
+video_capture = None
 
 def generate_frame():
     global video_capture
@@ -101,6 +102,7 @@ def generate_frame():
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
             face_names = []
+            global GLOBALUSERID
             for face_encoding in face_encodings:
                 # See if the face is a match for the known face(s)
                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
@@ -118,10 +120,11 @@ def generate_frame():
                     confidence_score = round(1 - face_distances[best_match_index], 2)
                     
                     if confidence_score > threshold:
-                        name = known_face_names[best_match_index]
+                        name = known_face_names[best_match_index]                     
                         print(f"Recognized as {name} with confidence {confidence_score}")
                         
                 face_names.append(name)
+                GLOBALUSERID = name
 
         process_this_frame = not process_this_frame
 
@@ -242,5 +245,16 @@ def upload():
             photo.save(os.path.join(subfolder_path, photo.filename))
             return 'Photo uploaded successfully!'
     return 'No photo received.'
+
+
+
+@app.route("/takeAttendance", methods=["POST"])
+def takeAttendance():
+    if request.method == "POST":
+        print(GLOBALUSERID)
+        return GLOBALUSERID
+    return 'No user'
+
+
 
 app.run(debug=True)
