@@ -8,33 +8,46 @@
 </head>
 <body>
     <h1>Webcam Photo Capture</h1>
+    <h1><a href="/">Home</a></h1>
     <div style="width:100%;float: left">
-        <div style="width:70%;float: left">
-            <video id="video" width="640" height="480" autoplay></video>
+        <div style="width:50%;float: left">
+            <div>
+                <video id="video" width="440" height="280" autoplay></video>
+                <button id="capture-btn">Capture Photo</button>
+            </div>
+            <div>
+                <img src="" alt="" id="privie_image" width="380" height="280">
+            </div>
         </div>
-        <div style="width:30%;float: left">
-            <img src="" alt="" id="privie_image">
+        <div style="width:50%;float: left">
+            <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <div>
+                    <label>GYM Id</label>
+                    <input type="text" name="gym_id" id="gym_id">
+                </div>
+                <div>
+                    <label>User Name</label>
+                    <input type="text" name="name" id="name">
+                </div>
+                <div>
+                    <label>User Id</label>
+                    <input type="text" name="user_id" id="user_id">
+                </div>
+            </form>
+            <div>
+                <button id="submit_form">Submit form</button>
+            </div>
         </div>
     </div>
     
     <div>
-        <button id="capture-btn">Capture Photo</button>
+        
+        
     </div> 
     <div>
-        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <div>
-                <label>User Name</label>
-                <input type="text" name="name">
-            </div>
-            <div>
-                <label>User Id</label>
-                <input type="text" name="user_id">
-            </div>
-            <input type="file" name="photo" id="photo-input" accept="image/*">
-            <input type="submit" value="Upload Photo">
-        </form>
+       
     </div> 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         const video = document.getElementById('video');
         const captureBtn = document.getElementById('capture-btn');
@@ -51,6 +64,7 @@
             });
 
         // Capture photo when button is clicked
+        var blobGet;
         captureBtn.addEventListener('click', () => {
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
@@ -59,10 +73,40 @@
             canvas.toBlob(blob => {
                 var image_view =  document.getElementById('privie_image');
                     image_view.src = URL.createObjectURL(blob);
+                    blobGet = blob;
                 return false;
 
+                // const formData = new FormData();
+                // formData.append('photo', blob, 'photo.jpg');
+                // fetch('/upload', {
+                //     method: 'POST',
+                //     body: formData
+                // })
+                // .then(response => {
+                //     if (response.ok) {
+                //         console.log('Photo uploaded successfully!');
+                //         // Optionally, reset the form after successful upload
+                //         uploadForm.reset();
+                //     } else {
+                //         console.error('Failed to upload photo:', response.statusText);
+                //     }
+                // })
+                // .catch(error => {
+                //     console.error('Error uploading photo:', error);
+                // });
+            }, 'image/jpeg');
+        });
+        $(document).ready(function(){
+            $(document).on('click','#submit_form',function(){
+                
                 const formData = new FormData();
-                formData.append('photo', blob, 'photo.jpg');
+                var gym_id = $("#gym_id").val();
+                var name = $("#name").val();
+                var user_id = $("#user_id").val();
+                var imagename = name+'_'+user_id;
+                formData.append('photo', blobGet, `${imagename}.jpg`);
+                formData.append('gym_id', gym_id);
+
                 fetch('/upload', {
                     method: 'POST',
                     body: formData
@@ -79,8 +123,8 @@
                 .catch(error => {
                     console.error('Error uploading photo:', error);
                 });
-            }, 'image/jpeg');
-        });
+            })
+        })
     </script>
 </body>
 </html>

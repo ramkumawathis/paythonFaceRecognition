@@ -12,7 +12,7 @@ import numpy as np
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'static'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -24,30 +24,59 @@ def allowed_file(filename):
 
 
 # for video 
-video_capture = cv2.VideoCapture(0)
+# video_capture = cv2.VideoCapture(0)
 
-# Load a sample picture and learn how to recognize it.
-mahesh_image = face_recognition.load_image_file("mahesh.jpg")
-krish_face_encoding = face_recognition.face_encodings(mahesh_image)[0]
+# # Load a sample picture and learn how to recognize it.
+# mahesh_image = face_recognition.load_image_file("mahesh.jpg")
+# krish_face_encoding = face_recognition.face_encodings(mahesh_image)[0]
 
-# Load a second sample picture and learn how to recognize it.
-bradley_image = face_recognition.load_image_file("bradley.jpg")
-bradley_face_encoding = face_recognition.face_encodings(bradley_image)[0]
+# # Load a second sample picture and learn how to recognize it.
+# bradley_image = face_recognition.load_image_file("bradley.jpg")
+# bradley_face_encoding = face_recognition.face_encodings(bradley_image)[0]
 
-# Create arrays of known face encodings and their names
-known_face_encodings = [
-    krish_face_encoding,
-    bradley_face_encoding
-]
-known_face_names = [
-    "Mahesh",
-    "Bradley"
-]
+# # Create arrays of known face encodings and their names
+# known_face_encodings = [
+#     krish_face_encoding,
+#     bradley_face_encoding
+# ]
+# known_face_names = [
+#     "Mahesh",
+#     "Bradley"
+# ]
 
+known_face_encodings = []
+known_face_names = []
+
+# Iterate over the images in the static folder
+upload_folder = app.config['UPLOAD_FOLDER']
+subfolder =   'a'
+subfolder_path = os.path.join(upload_folder, subfolder)
+
+for filename in os.listdir(subfolder_path):
+    # Construct the full path to the image
+    image_path = os.path.join(subfolder_path, filename)
+    
+    # Load the image file
+    image = face_recognition.load_image_file(image_path)
+    
+    # Extract face encoding
+    face_encoding = face_recognition.face_encodings(image)[0]
+    
+    # Extract the name from the filename (assuming filenames are in the format "<name>.jpg")
+    name = os.path.splitext(filename)[0]
+    
+    # Append the face encoding and name to the arrays
+    known_face_encodings.append(face_encoding)
+    known_face_names.append(name)
+
+# Now you have the arrays of known face encodings and their names
+# You can use them for face recognition
 
 
 
 def generate_frame():
+    global video_capture
+    video_capture = cv2.VideoCapture(0)
     # Initialize some variables
     face_locations = []
     face_encodings = []
@@ -123,12 +152,9 @@ def generate_frame():
 # for video 
 
 
-
-
 # images get 
 # API endpoint that serves images
 API_ENDPOINT = "https://jsonplaceholder.typicode.com/photos"
-# images get 
 
 def get_images_from_api():
     try:
@@ -145,7 +171,7 @@ def get_images_from_api():
     except Exception as e:
         print("Error fetching images from API:", str(e))
         return []
-
+# images get 
 
 @app.route("/")
 def home():
@@ -193,16 +219,27 @@ def get_images():
 
 @app.route('/take_photo')
 def take_photo():
+    global video_capture
+    if video_capture is not None:
+        video_capture.release()
     return render_template('take_photo.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'photo' in request.files:
-        print(request.files)
         photo = request.files['photo']
         if photo.filename != '':
-            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], 'photo.jpg'))
+            upload_folder = app.config['UPLOAD_FOLDER']
+            subfolder =   request.form['gym_id']
+
+            # Check if the subfolder exists, create it if it doesn't
+            subfolder_path = os.path.join(upload_folder, subfolder)
+            if not os.path.exists(subfolder_path):
+                os.makedirs(subfolder_path)
+
+            # photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo.filename))
+            photo.save(os.path.join(subfolder_path, photo.filename))
             return 'Photo uploaded successfully!'
     return 'No photo received.'
 
