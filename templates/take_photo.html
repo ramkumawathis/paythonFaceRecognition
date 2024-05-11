@@ -1,0 +1,86 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Photo Capture</title>
+</head>
+<body>
+    <h1>Webcam Photo Capture</h1>
+    <div style="width:100%;float: left">
+        <div style="width:70%;float: left">
+            <video id="video" width="640" height="480" autoplay></video>
+        </div>
+        <div style="width:30%;float: left">
+            <img src="" alt="" id="privie_image">
+        </div>
+    </div>
+    
+    <div>
+        <button id="capture-btn">Capture Photo</button>
+    </div> 
+    <div>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <div>
+                <label>User Name</label>
+                <input type="text" name="name">
+            </div>
+            <div>
+                <label>User Id</label>
+                <input type="text" name="user_id">
+            </div>
+            <input type="file" name="photo" id="photo-input" accept="image/*">
+            <input type="submit" value="Upload Photo">
+        </form>
+    </div> 
+
+    <script>
+        const video = document.getElementById('video');
+        const captureBtn = document.getElementById('capture-btn');
+        const uploadForm = document.getElementById('upload-form');
+        const photoInput = document.getElementById('photo-input');
+
+        // Access webcam and stream video
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Error accessing webcam:', err);
+            });
+
+        // Capture photo when button is clicked
+        captureBtn.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                var image_view =  document.getElementById('privie_image');
+                    image_view.src = URL.createObjectURL(blob);
+                return false;
+
+                const formData = new FormData();
+                formData.append('photo', blob, 'photo.jpg');
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Photo uploaded successfully!');
+                        // Optionally, reset the form after successful upload
+                        uploadForm.reset();
+                    } else {
+                        console.error('Failed to upload photo:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading photo:', error);
+                });
+            }, 'image/jpeg');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<html>
+    <head></head>
+    <body>
+        <h1>Please uplad a file</h1>
+
+        <form action="{{url_for('userimage')}}" method="post" enctype="multipart/form-data">
+            <label for="enter_value">*Upload Image*:</label><br>
+            <input type="file" name="file">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
