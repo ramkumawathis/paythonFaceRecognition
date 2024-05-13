@@ -8,6 +8,9 @@ face-recognition
 requests 
 python-dotenv
 
+# for run 
+    flask --app main run      //  run flask
+    flask run // now use (after doeenv create)
 
 # Note: all package ek sath install ke liye below command chala do console me
 pip install -r requirements.txt       // for all requirements ek sath install krni ho to

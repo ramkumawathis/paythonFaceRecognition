@@ -44,30 +44,30 @@ def allowed_file(filename):
 #     "Bradley"
 # ]
 
-known_face_encodings = []
-known_face_names = []
+# known_face_encodings = []
+# known_face_names = []
 
 # Iterate over the images in the static folder
 upload_folder = app.config['UPLOAD_FOLDER']
 subfolder =   'a'
 subfolder_path = os.path.join(upload_folder, subfolder)
 
-for filename in os.listdir(subfolder_path):
-    # Construct the full path to the image
-    image_path = os.path.join(subfolder_path, filename)
+# for filename in os.listdir(subfolder_path):
+#     # Construct the full path to the image
+#     image_path = os.path.join(subfolder_path, filename)
     
-    # Load the image file
-    image = face_recognition.load_image_file(image_path)
+#     # Load the image file
+#     image = face_recognition.load_image_file(image_path)
     
-    # Extract face encoding
-    face_encoding = face_recognition.face_encodings(image)[0]
+#     # Extract face encoding
+#     face_encoding = face_recognition.face_encodings(image)[0]
     
-    # Extract the name from the filename (assuming filenames are in the format "<name>.jpg")
-    name = os.path.splitext(filename)[0]
+#     # Extract the name from the filename (assuming filenames are in the format "<name>.jpg")
+#     name = os.path.splitext(filename)[0]
     
-    # Append the face encoding and name to the arrays
-    known_face_encodings.append(face_encoding)
-    known_face_names.append(name)
+#     # Append the face encoding and name to the arrays
+#     known_face_encodings.append(face_encoding)
+#     known_face_names.append(name)
 
 # Now you have the arrays of known face encodings and their names
 # You can use them for face recognition
@@ -76,6 +76,18 @@ GLOBALUSERID = "Test Name"
 video_capture = None
 
 def generate_frame():
+# reacl time me face get    
+    known_face_encodings = []
+    known_face_names = []
+    for filename in os.listdir(subfolder_path):
+        image_path = os.path.join(subfolder_path, filename) 
+        image = face_recognition.load_image_file(image_path)
+        face_encoding = face_recognition.face_encodings(image)[0]    
+        name = os.path.splitext(filename)[0]    
+        known_face_encodings.append(face_encoding)
+        known_face_names.append(name)
+# reacl time me face get
+
     global video_capture
     video_capture = cv2.VideoCapture(0)
     # Initialize some variables
